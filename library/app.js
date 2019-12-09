@@ -1,16 +1,53 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('static-favicon');
-var logger = require('morgan');
+var express      = require('express');
+var path         = require('path');
+var favicon      = require('static-favicon');
+var logger       = require('morgan');
 var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var bodyParser   = require('body-parser');
+var mongoose     = require('mongoose');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var users  = require('./routes/users');
 
+// App
 var app = express();
 
-// view engine setup
+// Mongoose connect
+mongoose.Promise = global.Promise;
+
+// Connect MongoDB at default port 27017.
+mongoose.connect('mongodb://localhost:27017/library', {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+}, (err) => {
+    if (!err) {
+        console.log('MongoDB Connection Succeeded.')
+    } else {
+        console.log('Error in DB connection: ' + err)
+    }
+});
+
+
+// Define o Schema
+var company = mongoose.Schema({
+    name: String
+});
+
+// Inserindo na Collection
+var Company = mongoose.model('Company', company);
+Company.create({
+    name: 'Google'
+}, (err, company) => {
+    if (err) {
+        console.log('Error');
+        return;
+    } 
+
+    console.log('Created => ', company);
+});
+
+
+// view engine setup 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 // app.set('view engine', 'hbs');
