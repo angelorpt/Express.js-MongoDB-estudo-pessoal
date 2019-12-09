@@ -27,19 +27,73 @@ mongoose.connect('mongodb://localhost:27017/library', {
     }
 });
 
+// SCHEMA
+var person = mongoose.Schema({
+    name: {
+        firstName: String,
+        lastName: String,
+    }
+});
+
+// VIRTUAL
+person.virtual('name.fullName').get(function() {
+    return this.name.firstName.concat(' ').concat(this.name.lastName);
+});
+
+
+// CRIAÇÃO DO MODELO PERSON
+var Person = mongoose.model('Person', person);
+
+// DADOS DO MODELO PERSON
+Person.create({
+    name: {
+        firstName: 'Angelo',
+        lastName: 'Pinto',
+    }  
+}, function(err, person){
+    if (err) {
+        console.log('Orreceu um erro =>' , err);   
+        return;
+    }
+
+    console.log('Person Data => ', person);
+    console.log('Person FullNamae => ', person.name.fullName);
+    
+});
 
 // Define o Schema
 var company = mongoose.Schema({
-    name: String
+    name: {
+        type: String,
+        required: true,
+    },
+    address: {
+        name: String,
+        number: String,
+        city: String,
+    },
+    date: {
+        type: Date,
+        required: true,
+        default: Date.now
+    }
 });
 
 // Inserindo na Collection
 var Company = mongoose.model('Company', company);
 Company.create({
-    name: 'Google'
+
+    name: 'MongoDB',
+    address: {
+        name: 'Rua x',
+        number: '765-A',
+        city: 'Manaus',
+    },
+    date: new Date()
+
 }, (err, company) => {
     if (err) {
-        console.log('Error');
+        console.log('Error => ', err);
         return;
     } 
 
